@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Gemini Chat</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 40px auto; }
+    #log { white-space: pre-wrap; margin-bottom: 20px; border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto; }
+    #msg { width: 80%; padding: 8px; }
+    button { padding: 8px 12px; }
+    #apikey { width: 80%; padding: 8px; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <h2>Gemini Chat</h2>
+
+  <p>まず APIキーを入力してください：</p>
+  <input id="apikey" placeholder="Gemini API Key を入力" />
+  <button onclick="setKey()">APIキー設定</button>
+
+  <hr>
+
+  <div id="log"></div>
+  <input id="msg" placeholder="メッセージを入力…" />
+  <button onclick="send()">送信</button>
+
+  <script type="module">
+    import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
+
+    let model = null;
+
+    // APIキーを設定
+    function setKey() {
+      const key = document.getElementById("apikey").value;
+      if (!key) {
+        alert("APIキーを入力してください");
+        return;
+      }
+
+      const genAI = new GoogleGenerativeAI(key);
+      model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+      alert("APIキーを設定しました！");
+    }
+
+    // メッセージ送信
+    async function send() {
+      if (!model) {
+        alert("先に APIキーを設定してください");
+        return;
+      }
+
+      const text = document.getElementById("msg").value;
+      document.getElementById("msg").value = "";
+
+      const log = document.getElementById("log");
+      log.textContent += "You: " + text + "\n";
+
+      const result = await model.generateContent(text);
+      const reply = result.response.text();
+
+      log.textContent += "Gemini: " + reply + "\n\n";
+      log.scrollTop = log.scrollHeight;
+    }
+  </script>
+</body>
+</html>
