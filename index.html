@@ -29,7 +29,6 @@
 
     let model = null;
 
-    // APIキーを設定
     function setKey() {
       const key = document.getElementById("apikey").value;
       if (!key) {
@@ -43,7 +42,6 @@
       alert("APIキーを設定しました！");
     }
 
-    // メッセージ送信
     async function send() {
       if (!model) {
         alert("先に APIキーを設定してください");
