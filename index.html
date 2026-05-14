@@ -3,63 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <title>Gemini Chat</title>
-  <style>
-    body { font-family: sans-serif; max-width: 600px; margin: 40px auto; }
-    #log { white-space: pre-wrap; margin-bottom: 20px; border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto; }
-    #msg { width: 80%; padding: 8px; }
-    button { padding: 8px 12px; }
-    #apikey { width: 80%; padding: 8px; margin-bottom: 10px; }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h2>Gemini Chat</h2>
+  <div class="app">
+    <header class="header">
+      <div class="logo">◇</div>
+      <div class="title">
+        <h1>Gemini Chat</h1>
+        <p>マルチモーダル対応・ローカルAPIキー方式</p>
+      </div>
+    </header>
 
-  <p>まず APIキーを入力してください：</p>
-  <input id="apikey" placeholder="Gemini API Key を入力" />
-  <button onclick="setKey()">APIキー設定</button>
+    <section class="settings">
+      <label class="label">Gemini API Key</label>
+      <div class="api-row">
+        <input id="apiKey" type="password" placeholder="APIキーを入力" />
+        <button id="saveKeyBtn">保存</button>
+        <button id="clearKeyBtn" class="ghost">削除</button>
+      </div>
+      <p class="hint">※ キーはこのブラウザのローカルストレージにのみ保存されます。</p>
+    </section>
 
-  <hr>
+    <main class="chat">
+      <div id="messages" class="messages"></div>
+    </main>
 
-  <div id="log"></div>
-  <input id="msg" placeholder="メッセージを入力…" />
-  <button onclick="send()">送信</button>
+    <footer class="input-area">
+      <div class="input-row">
+        <textarea id="prompt" rows="2" placeholder="メッセージを入力…"></textarea>
+        <div class="side-controls">
+          <label class="file-label">
+            <input id="imageInput" type="file" accept="image/*" />
+            📷
+          </label>
+          <button id="sendBtn">送信</button>
+        </div>
+      </div>
+      <div id="imagePreview" class="image-preview hidden"></div>
+    </footer>
+  </div>
 
-  <script type="module">
-    import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
-
-    let model = null;
-
-    function setKey() {
-      const key = document.getElementById("apikey").value;
-      if (!key) {
-        alert("APIキーを入力してください");
-        return;
-      }
-
-      const genAI = new GoogleGenerativeAI(key);
-      model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
-      alert("APIキーを設定しました！");
-    }
-
-    async function send() {
-      if (!model) {
-        alert("先に APIキーを設定してください");
-        return;
-      }
-
-      const text = document.getElementById("msg").value;
-      document.getElementById("msg").value = "";
-
-      const log = document.getElementById("log");
-      log.textContent += "You: " + text + "\n";
-
-      const result = await model.generateContent(text);
-      const reply = result.response.text();
-
-      log.textContent += "Gemini: " + reply + "\n\n";
-      log.scrollTop = log.scrollHeight;
-    }
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
